@@ -47,20 +47,13 @@ object CromwellManager extends StrictLogging {
     if (!isAlive("at start")) {
       val logFile: File = File(cromwell.logFile)
 
-      val command = List(
-        "java",
-        s"-Dconfig.file=${cromwell.conf}",
-        s"-Dwebservice.port=$ManagedCromwellPort",
-        "-jar",
-        cromwell.jar,
-        "server")
       val processBuilder = new java.lang.ProcessBuilder()
-        .command(command: _*)
+        .command(cromwell.command: _*)
         .redirectOutput(Redirect.appendTo(logFile.toJava))
         .redirectErrorStream(true)
 
       // Start the cromwell process
-      logger.info(s"Starting Cromwell via: ${command.mkString(" ")}")
+      logger.info(s"Starting Cromwell via: ${cromwell.command.mkString(" ")}")
       val process = processBuilder.start()
       cromwellProcess = Option(process)
 

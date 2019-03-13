@@ -3,20 +3,21 @@ package centaur
 import java.net.URL
 import java.nio.file.{Path, Paths}
 import java.util.concurrent.TimeUnit
-import better.files._
 
+import better.files._
+import centaur.CromwellManager.ManagedCromwellPort
 import com.typesafe.config.{Config, ConfigFactory}
 import configs.syntax._
 
 import scala.concurrent.duration.FiniteDuration
 
-object CromwellConfiguration {
+object JarCromwellConfiguration {
   def apply(conf: Config): CromwellConfiguration = {
     val jarPath = conf.getString("path")
     val confPath = conf.getString("conf")
     val logPath = conf.getString("log")
-    
-    new CromwellConfiguration(jarPath, confPath, logPath)
+
+    JarCromwellConfiguration(jarPath, confPath, logPath)
   }
 }
 
@@ -29,10 +30,10 @@ object CentaurRunMode {
         UnmanagedCromwellServer(new URL(url))
       case "jar" =>
         val jarConf = cromwellConfig.get[Config]("jar").value
-        val preRestart = CromwellConfiguration(jarConf)
+        val preRestart = JarCromwellConfiguration(jarConf)
         val withRestart = jarConf.getBoolean("withRestart")
         val postRestartConfig =
-          CromwellConfiguration(cromwellConfig.get[Config]("post-restart-jar").valueOrElse(jarConf))
+          JarCromwellConfiguration(cromwellConfig.get[Config]("post-restart-jar").valueOrElse(jarConf))
 
         ManagedCromwellServer(preRestart, postRestartConfig, withRestart)
       case other => throw new Exception(s"Unrecognized cromwell mode: $other")
@@ -49,7 +50,22 @@ case class ManagedCromwellServer(preRestart: CromwellConfiguration, postRestart:
   override val cromwellUrl = new URL(s"http://localhost:${CromwellManager.ManagedCromwellPort}")
 }
 
-case class CromwellConfiguration(jar: String, conf: String, logFile: String)
+trait CromwellConfiguration {
+  def logFile: String
+  def command: List[String]
+}
+
+case class JarCromwellConfiguration(jar: String, conf: String, logFile: String) extends CromwellConfiguration {
+  override def command: List[String] = {
+    List(
+      "java",
+      s"-Dconfig.file=$conf",
+      s"-Dwebservice.port=$ManagedCromwellPort",
+      "-jar",
+      jar,
+      "server")
+  }
+}
 
 object CentaurConfig {
   lazy val conf = ConfigFactory.load().getConfig("centaur")
