@@ -20,15 +20,15 @@ set -o errexit -o nounset -o pipefail
 
 cromwell::build::setup_common_environment
 
-# if [[ "${CROMWELL_BUILD_PROVIDER}" == "${CROMWELL_BUILD_PROVIDER_TRAVIS}" ]]; then
-#   # Upgrade docker-compose so that we get the correct exit codes
-#   docker-compose -version
-#   sudo rm /usr/local/bin/docker-compose
-#   curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" > docker-compose
-#   chmod +x docker-compose
-#   sudo mv docker-compose /usr/local/bin
-#   docker-compose -version
-# fi
+if [[ "${CROMWELL_BUILD_PROVIDER}" == "${CROMWELL_BUILD_PROVIDER_TRAVIS}" ]]; then
+  # Upgrade docker-compose so that we get the correct exit codes
+  docker-compose -version
+  sudo rm /usr/local/bin/docker-compose
+  curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" > docker-compose
+  chmod +x docker-compose
+  sudo mv docker-compose /usr/local/bin
+  docker-compose -version
+fi
 
 export TEST_CROMWELL_TAG=just-testing-horicromtal
 
