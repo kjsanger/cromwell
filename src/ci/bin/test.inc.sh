@@ -251,6 +251,7 @@ cromwell::private::create_centaur_variables() {
     CROMWELL_BUILD_CENTAUR_TYPE_ENGINE_UPGRADE="engineUpgrade"
     CROMWELL_BUILD_CENTAUR_TYPE_PAPI_UPGRADE="papiUpgrade"
     CROMWELL_BUILD_CENTAUR_TYPE_PAPI_UPGRADE_NEW_WORKFLOWS="papiUpgradeNewWorkflows"
+    CROMWELL_BUILD_CENTAUR_TYPE_HORICROMTAL="horicromtal"
 
     if [[ -z "${CROMWELL_BUILD_CENTAUR_TYPE-}" ]]; then
         if [[ "${CROMWELL_BUILD_TYPE}" == centaurEngineUpgrade* ]]; then
@@ -259,6 +260,8 @@ cromwell::private::create_centaur_variables() {
             CROMWELL_BUILD_CENTAUR_TYPE="${CROMWELL_BUILD_CENTAUR_TYPE_PAPI_UPGRADE_NEW_WORKFLOWS}"
         elif [[ "${CROMWELL_BUILD_TYPE}" == centaurPapiUpgrade* ]]; then
             CROMWELL_BUILD_CENTAUR_TYPE="${CROMWELL_BUILD_CENTAUR_TYPE_PAPI_UPGRADE}"
+        elif [[ "${CROMWELL_BUILD_TYPE}" == centaurHoricromtal* ]]; then
+            CROMWELL_BUILD_CENTAUR_TYPE="${CROMWELL_BUILD_CENTAUR_TYPE_HORICROMTAL}"
         else
             CROMWELL_BUILD_CENTAUR_TYPE="${CROMWELL_BUILD_CENTAUR_TYPE_STANDARD}"
         fi
