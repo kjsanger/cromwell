@@ -35,8 +35,26 @@ export TEST_CROMWELL_TAG=just-testing-horicromtal
 docker image ls -q broadinstitute/cromwell:"${TEST_CROMWELL_TAG}" | grep . || \
 CROMWELL_SBT_DOCKER_TAGS="${TEST_CROMWELL_TAG}" sbt server/docker
 
-HOST_IP=$(hostname -I || ipconfig getifaddr en0)
+echo "ip addr show"
+ip addr show || true
+
+echo "ip addr show eth0"
+ip addr show eth0 || true
+
+echo "which awk"
+which awk
+
+echo "which cut"
+which cut
+
+echo "which grep"
+which grep
+
+echo "Local IP command: ip addr show eth0 | grep 'inet ' | awk '{print \$2}' | cut -f1 -d'/'"
+ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || true
+
 CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
+HOST_IP=$(ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || ipconfig getifaddr en0) \
 docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up --scale cromwell_soldier=2 -d
 
 # Give them some time to be ready

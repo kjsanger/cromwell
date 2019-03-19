@@ -4,6 +4,10 @@ services:
   - docker
   - mysql
 language: scala
+addons:
+  apt:
+    packages:
+      - iproute2
 scala:
   - 2.12.6
 jdk:
