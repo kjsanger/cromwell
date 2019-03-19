@@ -25,7 +25,8 @@ services:
       timeout: 30s
       retries: 60
     extra_hosts:
-      - "localhost:${HOST_IP}"
+      # Let the host running Docker pass in its private IP so this compose cluster can connect to a provided MySQL.
+      - "mysql-host:${MYSQL_HOST_IP}"
 #  cromwell_soldier:
 #    image: "broadinstitute/cromwell:${CROMWELL_TAG}"
 #    working_dir: /cromwell-working-dir

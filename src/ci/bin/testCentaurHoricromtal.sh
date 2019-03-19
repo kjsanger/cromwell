@@ -44,7 +44,7 @@ ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || true
 export TEST_HOST_IP=$(ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || ipconfig getifaddr en0)
 
 CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
-HOST_IP="${TEST_HOST_IP}" \
+MYSQL_HOST_IP="${TEST_HOST_IP}" \
 docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up --scale cromwell_soldier=2 -d
 
 # Give them some time to be ready
@@ -56,5 +56,5 @@ sbt "centaur/it:testOnly *ExternalTestCaseSpec"
 
 # Tear everything down
 CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
-HOST_IP="${TEST_HOST_IP}" \
+MYSQL_HOST_IP="${TEST_HOST_IP}" \
 docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml down
