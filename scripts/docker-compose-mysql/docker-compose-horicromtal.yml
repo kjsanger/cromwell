@@ -25,8 +25,10 @@ services:
       timeout: 30s
       retries: 60
     extra_hosts:
-      # Let the host running Docker pass in its private IP so this compose cluster can connect to a provided MySQL.
+      # Let the host running Docker pass in its private IP so the services in this compose cluster can connect to a provided MySQL.
       - "mysql-host:${MYSQL_HOST_IP}"
+    ports:
+      - 8000:8000
 #  cromwell_soldier:
 #    image: "broadinstitute/cromwell:${CROMWELL_TAG}"
 #    working_dir: /cromwell-working-dir
@@ -41,12 +43,12 @@ services:
 #      - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal-soldier.conf
 #    extra_hosts:
 #      - "localhost:${HOST_IP}"
-  lb:
-    image: dockercloud/haproxy
-    links:
-      - cromwell_lord
+#  lb:
+#    image: dockercloud/haproxy
+#    links:
+#      - cromwell_lord
 #      - cromwell_soldier
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 8000:80
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    ports:
+#      - 8000:80
