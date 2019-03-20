@@ -45,7 +45,7 @@ export TEST_HOST_IP=$(ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut 
 
 CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
 MYSQL_HOST_IP="${TEST_HOST_IP}" \
-docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up -d
+docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up
 #docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up --scale cromwell_soldier=2 -d
 
 echo "docker network inspect docker-compose-mysql_default"
