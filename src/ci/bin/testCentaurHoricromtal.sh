@@ -36,9 +36,9 @@ ip addr show || true
 
 
 echo "Local IP command: ip addr show docker0 | grep 'inet ' | awk '{print \$2}' | cut -f1 -d'/'"
-ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || true
+ip addr show docker0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || true
 
-export TEST_HOST_IP=$(ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || ipconfig getifaddr en0)
+export TEST_HOST_IP=$(ip addr show docker0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || ipconfig getifaddr en0)
 
 CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
 MYSQL_HOST_IP="${TEST_HOST_IP}" \
