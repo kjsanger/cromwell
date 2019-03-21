@@ -34,7 +34,8 @@ CROMWELL_SBT_DOCKER_TAGS="${TEST_CROMWELL_TAG}" sbt server/docker
 echo "ip addr show"
 ip addr show || true
 
-echo "Local IP command: ip addr show eth0 | grep 'inet ' | awk '{print \$2}' | cut -f1 -d'/'"
+
+echo "Local IP command: ip addr show docker0 | grep 'inet ' | awk '{print \$2}' | cut -f1 -d'/'"
 ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || true
 
 export TEST_HOST_IP=$(ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || ipconfig getifaddr en0)
