@@ -12,10 +12,6 @@ source "${BASH_SOURCE%/*}/test.inc.sh" || source test.inc.sh
 # script *and* MySQL. The former is removed for obvious reasons, the latter is removed because this docker-compose'd
 # cluster is going to be restarted by Centaur but there's no reason MySQL should be restarted at the same time.
 
-# This takes care of:
-# - upgrading docker-compose if necessary
-# - building the Docker image for this branch (but not publishing it!)
-
 set -o errexit -o nounset -o pipefail
 
 cromwell::build::setup_common_environment
