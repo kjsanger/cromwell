@@ -45,8 +45,10 @@ CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
 docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up -d
 #docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up --scale cromwell_soldier=2 -d
 
-echo "docker network inspect docker-compose-mysql_default"
-docker network inspect docker-compose-mysql_default
+# what the
+# Error: No such network: docker-compose-mysql_default
+#echo "docker network inspect docker-compose-mysql_default"
+#docker network inspect docker-compose-mysql_default
 
 # Give them some time to be ready
 sleep 30
