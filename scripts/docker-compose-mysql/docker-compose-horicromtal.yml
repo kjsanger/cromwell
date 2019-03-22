@@ -27,26 +27,17 @@ services:
       retries: 60
     ports:
       - 8000:8000
-#  cromwell_soldier:
-#    image: "broadinstitute/cromwell:${CROMWELL_TAG}"
-#    working_dir: /cromwell-working-dir
-#    volumes:
-#      - ./cromwell-executions:/cromwell-working-dir/cromwell-executions
-#      - ./compose/cromwell/app-config:/app-config
-#    depends_on:
-#      cromwell_lord:
-#        condition: service_healthy
-#    command: ["server"]
-#    environment:
-#      - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal-soldier.conf
-#    extra_hosts:
-#      - "localhost:${HOST_IP}"
-#  lb:
-#    image: dockercloud/haproxy
-#    links:
-#      - cromwell_lord
-#      - cromwell_soldier
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
-#    ports:
-#      - 8000:80
+  cromwell_soldier:
+    image: "broadinstitute/cromwell:${CROMWELL_TAG}"
+    working_dir: /cromwell-working-dir
+    volumes:
+      - ./cromwell-executions:/cromwell-working-dir/cromwell-executions
+      - ./compose/cromwell/app-config:/app-config
+    depends_on:
+      cromwell_lord:
+        condition: service_healthy
+    command: ["server"]
+    environment:
+      - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal-soldier.conf
+    ports:
+      - 8001:8000
