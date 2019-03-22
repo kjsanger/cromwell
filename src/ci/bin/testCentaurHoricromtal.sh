@@ -42,7 +42,7 @@ CROMWELL_SBT_DOCKER_TAGS="${TEST_CROMWELL_TAG}" sbt server/docker
 
 # MYSQL_HOST_IP="${TEST_HOST_IP}" \
 CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
-docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up
+docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up -d
 #docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up --scale cromwell_soldier=2 -d
 
 echo "docker network inspect docker-compose-mysql_default"
