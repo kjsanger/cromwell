@@ -8,10 +8,11 @@
 # ```
 # docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml down -v && rm -r scripts/docker-compose-mysql/cromwell-executions
 # ```
-version: '2.2'
+version: '2.3'
 services:
   cromwell_lord:
     image: "broadinstitute/cromwell:${CROMWELL_TAG}"
+    network_mode: host
     working_dir: /cromwell-working-dir
     volumes:
       - ./cromwell-executions:/cromwell-working-dir/cromwell-executions
@@ -24,9 +25,6 @@ services:
       interval: 2s
       timeout: 30s
       retries: 60
-    extra_hosts:
-      # Let the host running Docker pass in its private IP so the services in this compose cluster can connect to a provided MySQL.
-      - "mysql-host:${MYSQL_HOST_IP}"
     ports:
       - 8000:8000
 #  cromwell_soldier:

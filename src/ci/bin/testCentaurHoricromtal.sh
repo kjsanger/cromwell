@@ -31,17 +31,17 @@ export TEST_CROMWELL_TAG=just-testing-horicromtal
 docker image ls -q broadinstitute/cromwell:"${TEST_CROMWELL_TAG}" | grep . || \
 CROMWELL_SBT_DOCKER_TAGS="${TEST_CROMWELL_TAG}" sbt server/docker
 
-echo "ip addr show"
-ip addr show || true
+#echo "ip addr show"
+#ip addr show || true
 
 
-echo "Local IP command: ip addr show docker0 | grep 'inet ' | awk '{print \$2}' | cut -f1 -d'/'"
-ip addr show docker0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || true
+#echo "Local IP command: ip addr show docker0 | grep 'inet ' | awk '{print \$2}' | cut -f1 -d'/'"
+#ip addr show docker0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || true
 
-export TEST_HOST_IP=$(ip addr show docker0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || ipconfig getifaddr en0)
+#export TEST_HOST_IP=$(ip addr show docker0 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/' || ipconfig getifaddr en0)
 
+# MYSQL_HOST_IP="${TEST_HOST_IP}" \
 CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
-MYSQL_HOST_IP="${TEST_HOST_IP}" \
 docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up
 #docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up --scale cromwell_soldier=2 -d
 
@@ -56,6 +56,6 @@ CENTAUR_TEST_FILE=scripts/docker-compose-mysql/test/hello.test \
 sbt "centaur/it:testOnly *ExternalTestCaseSpec"
 
 # Tear everything down
+# MYSQL_HOST_IP="${TEST_HOST_IP}" \
 CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
-MYSQL_HOST_IP="${TEST_HOST_IP}" \
 docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml down
