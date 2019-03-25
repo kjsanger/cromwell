@@ -21,6 +21,8 @@ export TEST_CROMWELL_TAG=just-testing-horicromtal
 docker image ls -q broadinstitute/cromwell:"${TEST_CROMWELL_TAG}" | grep . || \
 CROMWELL_SBT_DOCKER_TAGS="${TEST_CROMWELL_TAG}" sbt server/docker
 
+cp scripts/docker-compose-mysql/compose/cromwell/app-config/* target/ci/resources
+
 CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
 docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up -d
 

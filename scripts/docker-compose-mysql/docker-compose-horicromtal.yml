@@ -16,7 +16,8 @@ services:
     working_dir: /cromwell-working-dir
     volumes:
       - ./cromwell-executions:/cromwell-working-dir/cromwell-executions
-      - ./compose/cromwell/app-config:/app-config
+      - ../../target/ci/resources:/app-config
+      - ../../target/ci/resources:/cromwell-working-dir/target/ci/resources
     command: ["server"]
     environment:
       - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal.conf
@@ -31,7 +32,8 @@ services:
     working_dir: /cromwell-working-dir
     volumes:
       - ./cromwell-executions:/cromwell-working-dir/cromwell-executions
-      - ./compose/cromwell/app-config:/app-config
+      - ../../target/ci/resources:/app-config
+      - ../../target/ci/resources:/cromwell-working-dir/target/ci/resources
     depends_on:
       cromwell_lord:
         condition: service_healthy
