@@ -1,22 +1,9 @@
 sudo: required
 dist: trusty
-before_install:
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-#  - echo "BEFORE Docker version" && sudo docker version
-#  - sudo service stop docker
-#  - sudo service start docker
-  - echo "Docker version" && sudo docker version
 services:
   - docker
   - mysql
 language: scala
-addons:
-  apt:
-    packages:
-      - iproute2
 scala:
   - 2.12.6
 jdk:
