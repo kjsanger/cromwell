@@ -30,7 +30,7 @@ docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up
 sleep 30
 
 # Call centaur with our custom test case
-CENTAUR_TEST_FILE=scripts/docker-compose-mysql/test/hello.test \
+CENTAUR_TEST_FILE=scripts/docker-compose-mysql/test/hello_yes_docker.test \
 sbt "centaur/it:testOnly *ExternalTestCaseSpec"
 
 # Tear everything down
