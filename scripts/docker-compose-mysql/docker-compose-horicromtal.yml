@@ -25,10 +25,9 @@ services:
       interval: 2s
       timeout: 30s
       retries: 60
-    ports:
-      - 8000:8000
   cromwell_soldier:
     image: "broadinstitute/cromwell:${CROMWELL_TAG}"
+    network_mode: host
     working_dir: /cromwell-working-dir
     volumes:
       - ./cromwell-executions:/cromwell-working-dir/cromwell-executions
@@ -38,6 +37,4 @@ services:
         condition: service_healthy
     command: ["server"]
     environment:
-      - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal-soldier.conf
-    ports:
-      - 8001:8000
+      - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal-soldier.conf -Dwebservice.port=8001
