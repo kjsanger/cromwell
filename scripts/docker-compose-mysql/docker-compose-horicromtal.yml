@@ -1,12 +1,12 @@
 # Startup:
 # ```
 # CROMWELL_TAG=develop
-# docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up --scale cromwell=3
+# docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up
 # ```
 
 # Cleanup:
 # ```
-# docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml down -v && rm -r scripts/docker-compose-mysql/cromwell-executions
+# docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml down -v
 # ```
 version: '2.3'
 services:
