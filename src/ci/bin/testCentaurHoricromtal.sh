@@ -6,15 +6,9 @@ export CROMWELL_BUILD_REQUIRES_SECURE=true
 # shellcheck source=/dev/null
 source "${BASH_SOURCE%/*}/test.inc.sh" || source test.inc.sh
 
-# BEGIN docker compose deadlock Frankenstein
-# This does *not* actually run docker-compose! That will be done by Centaur with changes to support Docker composing.
-# Much of this is derived from the deadlock-disproving `testDockerDeadlock.sh` but removes both the deadlock-generating
-# script *and* MySQL. The former is removed for obvious reasons, the latter is removed because this docker-compose'd
-# cluster is going to be restarted by Centaur but there's no reason MySQL should be restarted at the same time.
-
-set -o errexit -o nounset -o pipefail
-
 cromwell::build::setup_common_environment
+
+cromwell::build::setup_centaur_environment
 
 export TEST_CROMWELL_TAG=just-testing-horicromtal
 
@@ -23,16 +17,28 @@ CROMWELL_SBT_DOCKER_TAGS="${TEST_CROMWELL_TAG}" sbt server/docker
 
 cp scripts/docker-compose-mysql/compose/cromwell/app-config/* target/ci/resources
 
-CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
-docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up -d
+cromwell::build::assemble_jars
 
-# Give them some time to be ready
-sleep 30
+GOOGLE_AUTH_MODE="service-account"
+GOOGLE_REFRESH_TOKEN_PATH="${CROMWELL_BUILD_RESOURCES_DIRECTORY}/papi_refresh_token.txt"
 
-# Call centaur with our custom test case
-CENTAUR_TEST_FILE=scripts/docker-compose-mysql/test/hello_yes_docker.test \
-sbt "centaur/it:testOnly *ExternalTestCaseSpec"
+# Export variables used in conf files
+export GOOGLE_AUTH_MODE
+export GOOGLE_REFRESH_TOKEN_PATH
 
-# Tear everything down
-CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
-docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml down
+# Copy rendered files
+mkdir -p "${CROMWELL_BUILD_CENTAUR_TEST_RENDERED}"
+cp \
+    "${CROMWELL_BUILD_RESOURCES_DIRECTORY}/private_docker_papi_v2_usa.options" \
+    "${CROMWELL_BUILD_CENTAUR_TEST_RENDERED}"
+
+# Excluded tests:
+# docker_hash_dockerhub_private: https://github.com/broadinstitute/cromwell/issues/3587
+
+cromwell::build::run_centaur \
+    -p 100 \
+    -e localdockertest \
+    "${CROMWELL_BUILD_CENTAUR_TEST_ADDITIONAL_PARAMETERS:-""}" \
+    -d "${CROMWELL_BUILD_CENTAUR_TEST_DIRECTORY}"
+
+cromwell::build::generate_code_coverage
