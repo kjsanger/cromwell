@@ -16,11 +16,10 @@ services:
     working_dir: /cromwell-working-dir
     volumes:
       - ./cromwell-executions:/cromwell-working-dir/cromwell-executions
-      - ../../target/ci/resources:/app-config
       - ../../target/ci/resources:/cromwell-working-dir/target/ci/resources
     command: ["server"]
     environment:
-      - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal.conf
+      - JAVA_OPTS=-Dconfig.file=/cromwell-working-dir/target/ci/resources/${CROMWELL_CONFIG}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 2s
@@ -32,11 +31,10 @@ services:
     working_dir: /cromwell-working-dir
     volumes:
       - ./cromwell-executions:/cromwell-working-dir/cromwell-executions
-      - ../../target/ci/resources:/app-config
       - ../../target/ci/resources:/cromwell-working-dir/target/ci/resources
     depends_on:
       cromwell_lord:
         condition: service_healthy
     command: ["server"]
     environment:
-      - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal.conf -Dwebservice.port=8001 -Dservices.MetadataService.config.metadata-summary-refresh-interval=Inf
+      - JAVA_OPTS=-Dconfig.file=/cromwell-working-dir/target/ci/resources/${CROMWELL_CONFIG} -Dwebservice.port=8001 -Dservices.MetadataService.config.metadata-summary-refresh-interval=Inf

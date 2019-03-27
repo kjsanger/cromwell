@@ -15,20 +15,28 @@ export TEST_CROMWELL_TAG=just-testing-horicromtal
 docker image ls -q broadinstitute/cromwell:"${TEST_CROMWELL_TAG}" | grep . || \
 CROMWELL_SBT_DOCKER_TAGS="${TEST_CROMWELL_TAG}" sbt server/docker
 
-# FIXME make a nice directory like the above for Centaur and maybe copy just the stuff we care about
-# FIXME assuming that doesn't turn out to be a huge PITA.
-cp scripts/docker-compose-mysql/compose/cromwell/app-config/* target/ci/resources
+cromwell::build::assemble_jars
 
-CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
-docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml up -d
+GOOGLE_AUTH_MODE="service-account"
+GOOGLE_REFRESH_TOKEN_PATH="${CROMWELL_BUILD_RESOURCES_DIRECTORY}/papi_refresh_token.txt"
 
-# Give them some time to be ready
-sleep 30
+# Export variables used in conf files
+export GOOGLE_AUTH_MODE
+export GOOGLE_REFRESH_TOKEN_PATH
 
-# Call centaur with our custom test case
-CENTAUR_TEST_FILE=scripts/docker-compose-mysql/test/hello_yes_docker.test \
-sbt "centaur/it:testOnly *ExternalTestCaseSpec"
+# Copy rendered files
+mkdir -p "${CROMWELL_BUILD_CENTAUR_TEST_RENDERED}"
+cp \
+    "${CROMWELL_BUILD_RESOURCES_DIRECTORY}/private_docker_papi_v2_usa.options" \
+    "${CROMWELL_BUILD_CENTAUR_TEST_RENDERED}"
 
-# Tear everything down
-CROMWELL_TAG="${TEST_CROMWELL_TAG}" \
-docker-compose -f scripts/docker-compose-mysql/docker-compose-horicromtal.yml down
+# Excluded tests:
+# docker_hash_dockerhub_private: https://github.com/broadinstitute/cromwell/issues/3587
+
+cromwell::build::run_centaur \
+    -p 100 \
+    -e localdockertest \
+    "${CROMWELL_BUILD_CENTAUR_TEST_ADDITIONAL_PARAMETERS:-""}" \
+    -d "${CROMWELL_BUILD_CENTAUR_TEST_DIRECTORY}"
+
+cromwell::build::generate_code_coverage
