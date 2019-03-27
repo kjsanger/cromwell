@@ -10,11 +10,6 @@ cromwell::build::setup_common_environment
 
 cromwell::build::setup_centaur_environment
 
-export TEST_CROMWELL_TAG=just-testing-horicromtal
-
-docker image ls -q broadinstitute/cromwell:"${TEST_CROMWELL_TAG}" | grep . || \
-CROMWELL_SBT_DOCKER_TAGS="${TEST_CROMWELL_TAG}" sbt server/docker
-
 cromwell::build::assemble_jars
 
 GOOGLE_AUTH_MODE="service-account"
@@ -29,6 +24,12 @@ mkdir -p "${CROMWELL_BUILD_CENTAUR_TEST_RENDERED}"
 cp \
     "${CROMWELL_BUILD_RESOURCES_DIRECTORY}/private_docker_papi_v2_usa.options" \
     "${CROMWELL_BUILD_CENTAUR_TEST_RENDERED}"
+
+export TEST_CROMWELL_TAG=just-testing-horicromtal
+export TEST_CROMWELL_CONF=horicromtal_application.conf
+
+docker image ls -q broadinstitute/cromwell:"${TEST_CROMWELL_TAG}" | grep . || \
+CROMWELL_SBT_DOCKER_TAGS="${TEST_CROMWELL_TAG}" sbt server/docker
 
 # Excluded tests:
 # docker_hash_dockerhub_private: https://github.com/broadinstitute/cromwell/issues/3587
