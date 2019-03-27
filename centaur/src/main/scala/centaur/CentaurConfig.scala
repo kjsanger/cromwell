@@ -1,5 +1,6 @@
 package centaur
 
+import java.lang.ProcessBuilder.Redirect
 import java.net.URL
 import java.nio.file.{Path, Paths}
 import java.util.concurrent.TimeUnit
@@ -36,6 +37,9 @@ object CentaurRunMode {
           JarCromwellConfiguration(cromwellConfig.get[Config]("post-restart-jar").valueOrElse(jarConf))
 
         ManagedCromwellServer(preRestart, postRestartConfig, withRestart)
+//      case "docker-compose" =>
+//        val composeConf = cromwellConfig.get[Config](path = "docker-compose").value
+//        ???
       case other => throw new Exception(s"Unrecognized cromwell mode: $other")
     }
   }
@@ -50,20 +54,60 @@ case class ManagedCromwellServer(preRestart: CromwellConfiguration, postRestart:
   override val cromwellUrl = new URL(s"http://localhost:${CromwellManager.ManagedCromwellPort}")
 }
 
-trait CromwellConfiguration {
+trait CromwellProcess {
   def logFile: String
-  def command: List[String]
+  def displayString: String
+  def start(): Unit
+  def stop(): Unit
+  def isAlive: Boolean
+  def cromwellConfiguration: CromwellConfiguration
 }
 
+trait CromwellConfiguration {
+  def createProcess: CromwellProcess
+  def logFile: String
+}
+
+
 case class JarCromwellConfiguration(jar: String, conf: String, logFile: String) extends CromwellConfiguration {
-  override def command: List[String] = {
-    List(
-      "java",
-      s"-Dconfig.file=$conf",
-      s"-Dwebservice.port=$ManagedCromwellPort",
-      "-jar",
-      jar,
-      "server")
+
+  override def createProcess: CromwellProcess = {
+
+    case class JarCromwellProcess(override val cromwellConfiguration: JarCromwellConfiguration) extends CromwellProcess {
+
+      private val command = Array(
+        "java",
+        s"-Dconfig.file=$conf",
+        s"-Dwebservice.port=$ManagedCromwellPort",
+        "-jar",
+        jar,
+        "server")
+
+      private var _process: Process = _
+
+      override def displayString: String = command.mkString(" ")
+
+      override def start(): Unit = {
+        val processBuilder = new java.lang.ProcessBuilder()
+          .command(command: _*)
+          .redirectOutput(Redirect.appendTo(File(logFile).toJava))
+          .redirectErrorStream(true)
+        _process = processBuilder.start()
+      }
+
+      override def stop(): Unit = {
+        _process.getOutputStream.flush()
+        _process.destroy()
+        _process.waitFor()
+        ()
+      }
+
+      override def isAlive: Boolean = _process.isAlive
+
+      override def logFile: String = cromwellConfiguration.logFile
+    }
+
+    JarCromwellProcess(this)
   }
 }
 
