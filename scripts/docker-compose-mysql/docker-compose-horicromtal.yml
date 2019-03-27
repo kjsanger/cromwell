@@ -39,4 +39,4 @@ services:
         condition: service_healthy
     command: ["server"]
     environment:
-      - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal-soldier.conf -Dwebservice.port=8001
+      - JAVA_OPTS=-Dconfig.file=/app-config/test-horicromtal.conf -Dwebservice.port=8001 -Dservices.MetadataService.config.metadata-summary-refresh-interval=Inf
