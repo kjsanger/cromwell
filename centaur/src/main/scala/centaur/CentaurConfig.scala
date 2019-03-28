@@ -28,7 +28,7 @@ object CentaurRunMode {
       case "docker-compose" =>
         val composeConf = cromwellConfig.get[Config](path = "docker-compose").value
         val preRestart = DockerComposeCromwellConfiguration(composeConf)
-        val withRestart = composeConf.getBoolean("docker-compose-with-restart")
+        val withRestart = composeConf.getBoolean("withRestart")
         val postRestartConfig =
           DockerComposeCromwellConfiguration(cromwellConfig.getOrElse("post-restart-docker-compose", composeConf).value)
         ManagedCromwellServer(preRestart, postRestartConfig, withRestart)
