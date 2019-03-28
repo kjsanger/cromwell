@@ -10,6 +10,7 @@ source "${BASH_SOURCE%/*}/test.inc.sh" || source test.inc.sh
 # There should probably be more indirections in CI scripts but that can wait.
 export TEST_CROMWELL_TAG=just-testing-horicromtal
 export TEST_CROMWELL_CONF=horicromtal_application.conf
+export TEST_CROMWELL_COMPOSE_FILE="$(realpath $0)"
 
 cromwell::build::setup_common_environment
 
